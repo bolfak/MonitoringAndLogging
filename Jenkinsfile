@@ -11,12 +11,6 @@ pipeline {
       }
     }
 
-    stage('Security Scan') {
-      steps {
-        aquaMicroscanner(imageName: 'alpine:latest', notCompleted: 'exit 1', onDisallowed: 'fail')
-      }
-    }
-
     stage('Upload to AWS') {
       steps {
         withAWS(region: 'us-east-2', credentials: 'aws-static') {
@@ -24,6 +18,12 @@ pipeline {
           s3Upload(pathStyleAccessEnabled: true, payloadSigningEnabled: true, file: 'index.html', bucket: 'static-jenkins-pipeline')
         }
 
+      }
+    }
+    
+    stage('Security Scan') {
+      steps {
+        aquaMicroscanner(imageName: 'alpine:latest', notCompleted: 'exit 1', onDisallowed: 'fail')
       }
     }
 
